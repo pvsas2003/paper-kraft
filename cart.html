@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="paperKraftApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart - PaperKraft</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .cart-container { max-width: 800px; margin: auto; }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #ccc;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      flex-wrap: wrap;
+    }
+    .cart-item img {
+      width: 100px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .item-details {
+      flex-grow: 1;
+      margin-left: 20px;
+    }
+    .quantity-input {
+      width: 60px;
+      padding: 5px;
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .remove-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .remove-btn:hover {
+      background-color: #b52a37;
+    }
+    .total-section {
+      text-align: right;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    .btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 20px;
+      display: inline-block;
+      text-decoration: none;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body ng-controller="CartController">
+  <div class="cart-container">
+    <h1>Your Cart</h1>
+    <div ng-if="cart.length === 0">
+      <p>Your cart is empty. <a href="designs.html">Go back to designs</a></p>
+    </div>
+
+    <div class="cart-item" ng-repeat="item in cart">
+      <img ng-src="{{item.image}}" alt="{{item.name}}">
+      <div class="item-details">
+        <h3>{{item.name}}</h3>
+        <p>{{item.description}}</p>
+        <p>Unit Price: ₹{{item.price}}</p>
+        <label>
+          Quantity:
+          <input type="number" min="1" class="quantity-input" ng-model="item.quantity" ng-change="updateCart()" />
+        </label>
+        <p><strong>Subtotal: ₹{{(item.price * item.quantity).toFixed(2)}}</strong></p>
+      </div>
+      <button class="remove-btn" ng-click="removeItem($index)">Remove</button>
+    </div>
+
+    <div class="total-section" ng-if="cart.length > 0">
+      <p><strong>Total: ₹{{getTotal()}}</strong></p>
+      <button class="btn" ng-click="proceedToPayment()">Proceed to Payment</button>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script>
+    var app = angular.module('paperKraftApp', []);
+
+    app.controller('CartController', function($scope) {
+      $scope.cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+      // Ensure default quantity is set to 1
+      $scope.cart.forEach(item => {
+        if (!item.quantity || item.quantity < 1) {
+          item.quantity = 1;
+        }
+      });
+
+      $scope.updateCart = function() {
+        localStorage.setItem('cart', JSON.stringify($scope.cart));
+      };
+
+      $scope.getTotal = function() {
+        return $scope.cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
+      };
+
+      $scope.removeItem = function(index) {
+        $scope.cart.splice(index, 1);
+        $scope.updateCart();
+      };
+
+      $scope.proceedToPayment = function() {
+        let totalAmount = $scope.getTotal();
+        localStorage.setItem('totalAmount', totalAmount);
+        localStorage.setItem('cart', JSON.stringify($scope.cart)); // Save with quantities
+        window.location.href = 'payment.html';
+      };
+    });
+  </script>
+</body>
+</html>
+
+
+
