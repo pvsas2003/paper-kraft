@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Accounting Report - Paper Manufacturing</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 40px;
+      background: #f4f6f8;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .totals {
+      margin-top: 30px;
+      font-size: 18px;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      display: inline-block;
+    }
+    canvas {
+      max-width: 1000px;
+      margin-top: 40px;
+    }
+    .controls {
+      margin: 20px 0;
+    }
+    select, button {
+      padding: 10px;
+      margin: 5px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 Year Financial Report (2023–2024)</h1>
+
+  <div class="controls">
+    <select id="yearFilter">
+      <option value="all">All Years</option>
+      <option value="2023">2023</option>
+      <option value="2024">2024</option>
+    </select>
+    <button onclick="downloadPDF()">Download PDF</button>
+  </div>
+
+  <canvas id="accountChart"></canvas>
+  <canvas id="pieChart" style="margin-top: 40px;"></canvas>
+
+  <div class="totals">
+    <p><strong>Total Cost:</strong> ₹<span id="totalCost"></span></p>
+    <p><strong>Total Sell:</strong> ₹<span id="totalSell"></span></p>
+    <p><strong>Total Profit:</strong> ₹<span id="totalProfit"></span></p>
+  </div>
+
+  <script>
+    const allMonths = [
+      'Jan 2023', 'Feb 2023', 'Mar 2023', 'Apr 2023', 'May 2023', 'Jun 2023',
+      'Jul 2023', 'Aug 2023', 'Sep 2023', 'Oct 2023', 'Nov 2023', 'Dec 2023',
+      'Jan 2024', 'Feb 2024', 'Mar 2024', 'Apr 2024', 'May 2024', 'Jun 2024',
+      'Jul 2024', 'Aug 2024', 'Sep 2024', 'Oct 2024', 'Nov 2024', 'Dec 2024'
+    ];
+
+    const cost = [120000,130000,125000,140000,150000,160000,145000,155000,165000,170000,160000,180000,125000,135000,130000,145000,155000,165000,150000,160000,170000,175000,165000,185000];
+    const sell = [180000,190000,185000,200000,210000,220000,215000,225000,230000,240000,235000,250000,185000,195000,190000,205000,215000,225000,220000,230000,235000,245000,240000,255000];
+    const profit = sell.map((val, i) => val - cost[i]);
+
+    let chart;
+    let pieChart;
+
+    function updateChart(year = 'all') {
+      const yearIndex = year === '2023' ? 0 : year === '2024' ? 12 : 0;
+      const range = year === '2023' || year === '2024' ? 12 : 24;
+      const months = allMonths.slice(yearIndex, yearIndex + range);
+      const filteredCost = cost.slice(yearIndex, yearIndex + range);
+      const filteredSell = sell.slice(yearIndex, yearIndex + range);
+      const filteredProfit = profit.slice(yearIndex, yearIndex + range);
+
+      const totalCost = filteredCost.reduce((a, b) => a + b, 0);
+      const totalSell = filteredSell.reduce((a, b) => a + b, 0);
+      const totalProfit = totalSell - totalCost;
+
+      document.getElementById('totalCost').textContent = totalCost.toLocaleString('en-IN');
+      document.getElementById('totalSell').textContent = totalSell.toLocaleString('en-IN');
+      document.getElementById('totalProfit').textContent = totalProfit.toLocaleString('en-IN');
+
+      if (chart) chart.destroy();
+      if (pieChart) pieChart.destroy();
+
+      chart = new Chart(document.getElementById('accountChart'), {
+        type: 'line',
+        data: {
+          labels: months,
+          datasets: [
+            { label: 'Cost (₹)', data: filteredCost, borderColor: '#e74c3c', backgroundColor: 'rgba(231, 76, 60, 0.1)', fill: true, tension: 0.3 },
+            { label: 'Sell (₹)', data: filteredSell, borderColor: '#3498db', backgroundColor: 'rgba(52, 152, 219, 0.1)', fill: true, tension: 0.3 },
+            { label: 'Profit (₹)', data: filteredProfit, borderColor: '#2ecc71', backgroundColor: 'rgba(46, 204, 113, 0.1)', fill: true, tension: 0.3 }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: `Monthly Financial Performance (${year === 'all' ? '2023–2024' : year})`,
+              font: { size: 20 }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: value => '₹' + value.toLocaleString('en-IN')
+              }
+            }
+          }
+        }
+      });
+
+      pieChart = new Chart(document.getElementById('pieChart'), {
+        type: 'pie',
+        data: {
+          labels: ['Cost (₹)', 'Sell (₹)', 'Profit (₹)'],
+          datasets: [{
+            data: [totalCost, totalSell, totalProfit],
+            backgroundColor: ['#e74c3c', '#3498db', '#2ecc71']
+          }]
+        },
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: `Yearly Summary (₹)`
+            }
+          }
+        }
+      });
+    }
+    document.getElementById('yearFilter').addEventListener('change', function() {
+      updateChart(this.value);
+    });
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
+      pdf.text("Paper Manufacturing Financial Report", 20, 20);
+      pdf.text(`Total Cost: ₹${document.getElementById('totalCost').textContent}`, 20, 40);
+      pdf.text(`Total Sell: ₹${document.getElementById('totalSell').textContent}`, 20, 50);
+      pdf.text(`Total Profit: ₹${document.getElementById('totalProfit').textContent}`, 20, 60);
+      pdf.save("financial_report.pdf");
+    }
+    updateChart();
+  </script>
+</body>
+</html>
