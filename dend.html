@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="paperKraftApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Designs - PaperKraft</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .designs-container { display: flex; gap: 20px; flex-wrap: wrap; }
+    .design-card {
+      border: 1px solid #ccc;
+      padding: 16px;
+      border-radius: 10px;
+      width: 200px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .customize {
+      margin-top: 30px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body ng-controller="DesignsController">
+  <h1>Choose Paper Designs</h1>
+  <div class="designs-container">
+    <div class="design-card" ng-repeat="design in designs">
+      <img ng-src="{{design.image}}" alt="{{design.name}} Image">
+      <h3>{{design.name}}</h3>
+      <p>{{design.description}}</p>
+      <button ng-click="addToCart(design)">Add to Cart</button>
+    </div>
+  </div>
+
+  <div class="customize">
+    <button onclick="window.location.href='cart.html'">View Cart</button>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script>
+    var app = angular.module('paperKraftApp', []);
+
+    app.controller('DesignsController', function($scope) {
+      $scope.designs = [
+        {
+          name: 'A3 Paper',
+          description: 'Larger than A4, used for posters, charts, drawings. Size: 297 × 420 mm.',
+          image: 'https://5.imimg.com/data5/SELLER/Default/2022/11/XI/UP/LT/121547117/white-a3-size-paper-500x500.jpg'
+        },
+        {
+          name: 'A4 Paper',
+          description: 'Standard paper size used for printing, documents. Size: 210 × 297 mm.',
+          image: 'https://rukminim2.flixcart.com/image/850/1000/l5bd5zk0/paper/x/a/y/ivory-sheet-for-drawing-work-size-a4-set-of-40-sheets-smooth-and-original-imaggytnx2qcy3dy.jpeg?q=90&crop=false'
+        },
+        {
+          name: 'Chart Paper',
+          description: 'Thicker, used for school projects or presentations. Size varies.',
+          image: 'https://leneta.com/wp-content/uploads/2024/10/WG-leneta.com_.jpg'
+        },
+        {
+          name: 'Bond Paper',
+          description: 'High-quality, durable paper used for documents. Size: A4, Letter.',
+          image: 'https://5.imimg.com/data5/SELLER/Default/2023/9/345845734/VS/QM/JE/5477662/a4-bond-paper.jpg'
+        },
+        {
+          name: 'Coloured Paper',
+          description: 'Brightly colored paper for projects, origami, etc. Size: A4.',
+          image: 'https://m.media-amazon.com/images/I/612dp1+ubjL.jpg'
+        }
+      ];
+
+      $scope.addToCart = function(design) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // Assign price based on design name
+        const prices = {
+          'A3 Paper': 1.00,
+          'A4 Paper': 0.75,
+          'Chart Paper': 0.90,
+          'Bond Paper': 1.00,
+          'Coloured Paper': 0.50
+        };
+
+        design.price = prices[design.name] || 1.00;
+
+        // Prevent duplicates
+        if (!cart.some(item => item.name === design.name)) {
+          cart.push(design);
+          localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        // Redirect to cart page
+        window.location.href = 'cart.html';
+      };
+    });
+  </script>
+</body>
+</html>

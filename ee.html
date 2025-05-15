@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="paperKraftApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart - PaperKraft</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .cart-container { max-width: 600px; margin: auto; }
+    .cart-item {
+      border: 1px solid #ccc;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      display: block;
+      margin: 20px auto 0;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    a {
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body ng-controller="CartController">
+  <h1>Your Cart</h1>
+  <div class="cart-container">
+    <div class="cart-item" ng-repeat="item in cart">
+      <h3>{{item.name}}</h3>
+      <p>{{item.description}}</p>
+    </div>
+    <div ng-if="cart.length === 0">
+      <p>Your cart is empty.</p>
+    </div>
+
+    <!-- Updated: Proceed to Payment as a link -->
+    <a href="payment.html" ng-if="cart.length > 0">
+      <button>Proceed to Payment</button>
+    </a>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script>
+    var app = angular.module('paperKraftApp', []);
+
+    app.controller('CartController', function($scope) {
+      $scope.cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+      // You can still keep this function in case you want JS-based routing in future
+      $scope.proceedToPayment = function() {
+        window.location.href = 'payment.html';
+      };
+    });
+  </script>
+</body>
+</html>
