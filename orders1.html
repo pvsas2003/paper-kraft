@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="paperkraftApp">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PaperKraft Orders</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    nav { background: #2c3e50; padding: 1em; color: white; text-align: center; }
+    nav a { color: white; margin: 0 1em; text-decoration: none; }
+    .container { padding: 2em; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 1em; margin-bottom: 1em; }
+    .btn { background: #3498db; color: white; padding: 0.5em 1em; border: none; border-radius: 5px; cursor: pointer; }
+    .btn:hover { background: #2980b9; }
+    .flex { display: flex; flex-wrap: wrap; gap: 1em; }
+    .flex > div { flex: 1 1 200px; }
+  </style>
+</head>
+<body ng-controller="MainController">
+
+  <nav>
+    <a href="#orders">Orders</a>
+    <a href="#dend1">Dend1</a>
+    <a href="#cart">Cart</a>
+    <a href="#payment">Payment</a>
+  </nav>
+
+  <div class="container" ng-view></div>
+
+  <script>
+    const app = angular.module('paperkraftApp', ['ngRoute']);
+
+    app.config(function($routeProvider) {
+      $routeProvider
+        .when('/orders', {
+          template: `
+            <h2>Orders Page</h2>
+            <p>Welcome to your order dashboard. Choose designs, add to cart, and proceed with payment.</p>
+          `
+        })
+        .when('/dend1', {
+          template: `
+            <h2>Choose Paper Designs</h2>
+            <div class="flex">
+              <div class="card" ng-repeat="design in designs">
+                <img ng-src="{{design.image}}" alt="{{design.name}} Image" style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;">
+                <h4>{{design.name}}</h4>
+                <p>{{design.description}}</p>
+                <button class="btn" ng-click="addToCart(design)">Add to Cart</button>
+              </div>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+              <button class="btn" ng-click="goTo('cart')">View Cart</button>
+            </div>
+          `,
+          controller: 'MainController'
+        })
+        .when('/cart', {
+          template: `
+            <h2>Your Cart</h2>
+            <div class="card" ng-repeat="item in cart">
+              <h4>{{item.name}}</h4>
+              <p>{{item.description}}</p>
+            </div>
+            <div ng-if="!cart.length">Your cart is empty.</div>
+            <button class="btn" ng-if="cart.length" ng-click="goTo('payment')">Proceed to Payment</button>
+            <button class="btn" ng-click="goTo('orders')">Back to Orders</button>
+          `,
+          controller: 'MainController'
+        })
+        .when('/payment', {
+          template: `
+            <h2>Payment Page</h2>
+            <p>Pay securely to complete your order.</p>
+            <button class="btn" ng-click="processPayment(true)">Pay Now (Success)</button>
+            <button class="btn" ng-click="processPayment(false)">Pay Now (Fail)</button>
+          `,
+          controller: 'MainController'
+        })
+        .otherwise({
+          redirectTo: '/orders'
+        });
+    });
+
+    app.controller('MainController', function($scope, $location) {
+      $scope.cart = JSON.parse(localStorage.getItem('cart')) || [];
+      $scope.designs = [
+        {
+          name: 'A3 Paper',
+          description: 'Larger than A4, used for posters, charts, drawings. Size: 297 × 420 mm.',
+          image: 'https://5.imimg.com/data5/SELLER/Default/2022/11/XI/UP/LT/121547117/white-a3-size-paper-500x500.jpg'
+        },
+        {
+          name: 'A4 Paper',
+          description: 'Standard paper size used for printing, documents. Size: 210 × 297 mm.',
+          image: 'https://rukminim2.flixcart.com/image/850/1000/l5bd5zk0/paper/x/a/y/ivory-sheet-for-drawing-work-size-a4-set-of-40-sheets-smooth-and-original-imaggytnx2qcy3dy.jpeg?q=90&crop=false'
+        },
+        {
+          name: 'Chart Paper',
+          description: 'Thicker, used for school projects or presentations. Size varies.',
+          image: 'https://leneta.com/wp-content/uploads/2024/10/WG-leneta.com_.jpg'
+        },
+        {
+          name: 'Bond Paper',
+          description: 'High-quality, durable paper used for documents. Size: A4, Letter.',
+          image: 'https://5.imimg.com/data5/SELLER/Default/2023/9/345845734/VS/QM/JE/5477662/a4-bond-paper.jpg'
+        },
+        {
+          name: 'Coloured Paper',
+          description: 'Brightly colored paper for projects, origami, etc. Size: A4.',
+          image: 'https://m.media-amazon.com/images/I/612dp1+ubjL.jpg'
+        }
+      ];
+
+      $scope.addToCart = function(item) {
+        if (!$scope.cart.some(i => i.name === item.name)) {
+          $scope.cart.push(item);
+          localStorage.setItem('cart', JSON.stringify($scope.cart));
+          alert(item.name + ' added to cart!');
+        } else {
+          alert(item.name + ' is already in the cart.');
+        }
+      };
+
+      $scope.goTo = function(path) {
+        $location.path('/' + path);
+      };
+
+      $scope.processPayment = function(success) {
+        if (success) {
+          alert('Payment Successful!');
+        } else {
+          alert('Payment Failed. Try again.');
+        }
+        $scope.cart = [];
+        localStorage.removeItem('cart');
+        $location.path('/orders');
+      };
+    });
+  </script>
+
+</body>
+</html>

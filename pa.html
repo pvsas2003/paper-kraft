@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment - PaperKraft</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .payment-container { max-width: 600px; margin: auto; text-align: center; }
+    .payment-method {
+      border: 1px solid #ccc;
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .payment-method img {
+      width: 100px;
+      margin-bottom: 10px;
+    }
+    .btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      display: inline-block;
+      text-decoration: none;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+    .back-btn {
+      background-color: #6c757d;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="payment-container">
+    <h1>Select a Payment Method</h1>
+
+    <div class="payment-method">
+      <img src="https://freepnglogo.com/images/all_img/phone-pe-logo-9184.png" alt="PhonePe">
+      <p><a class="btn" href="https://www.phonepe.com/" target="_blank">Pay via PhonePe</a></p>
+    </div>
+
+    <div class="payment-method">
+      <img src="https://play-lh.googleusercontent.com/IWU8HM1uQuW8wVrp6XpyOOJXvb_1tDPUDAOfkrl83RZPG9Ww3dCY9X1AV6T1atSvgXc" alt="Paytm">
+      <p><a class="btn" href="https://paytm.com/" target="_blank">Pay via Paytm</a></p>
+    </div>
+
+    <div class="payment-method">
+      <img src="https://static1.anpoimages.com/wordpress/wp-content/uploads/2020/11/05/Google-Pay-India-Tez-new-icon.jpg" alt="GPay">
+      <p><a class="btn" href="https://pay.google.com/" target="_blank">Pay via Google Pay</a></p>
+    </div>
+
+    <div class="payment-method">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOTyQr77jTaet0ai9jeKErezXc7uqzGDKIhQ&s" alt="Card">
+      <p><a class="btn" href="https://razorpay.com/" target="_blank">Pay with Credit/Debit Card</a></p>
+    </div>
+
+    <button class="btn back-btn" onclick="window.location.href='orders.html'">Back to Orders</button>
+  </div>
+</body>
+</html>

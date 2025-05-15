@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Management Dashboard - PaperKraft</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f4f4; }
+    header { background-color: #007bff; color: white; padding: 20px; text-align: center; }
+    main { padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    section {
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 { color: #333; margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px 12px; border-bottom: 1px solid #ccc; text-align: left; }
+    .chart-container { height: 250px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📊 Management Dashboard - PaperKraft</h1>
+  </header>
+
+  <main>
+    <!-- Orders Section -->
+    <section>
+      <h2>📦 Orders</h2>
+      <table>
+        <tr><th>ID</th><th>Product</th><th>Quantity</th><th>Status</th></tr>
+        <tr><td>101</td><td>A4 Paper</td><td>500</td><td>Shipped</td></tr>
+        <tr><td>102</td><td>Chart Paper</td><td>300</td><td>Processing</td></tr>
+        <tr><td>103</td><td>Bond Paper</td><td>200</td><td>Delivered</td></tr>
+      </table>
+    </section>
+
+    <!-- Workers Section -->
+    <section>
+      <h2>👷 Workers</h2>
+      <table>
+        <tr><th>Name</th><th>Role</th><th>Contact</th></tr>
+        <tr><td>Ravi Kumar</td><td>Machine Operator</td><td>+91-9876543210</td></tr>
+        <tr><td>Sunita Sharma</td><td>Packaging</td><td>+91-9123456789</td></tr>
+        <tr><td>Mohit Singh</td><td>Quality Control</td><td>+91-9988776655</td></tr>
+      </table>
+    </section>
+
+    <!-- Attendance Section -->
+    <section>
+      <h2>🗓️ Attendance (Today)</h2>
+      <table>
+        <tr><th>Name</th><th>Status</th></tr>
+        <tr><td>Ravi Kumar</td><td>Present</td></tr>
+        <tr><td>Sunita Sharma</td><td>Present</td></tr>
+        <tr><td>Mohit Singh</td><td>Absent</td></tr>
+      </table>
+    </section>
+
+    <!-- Accounting Chart Section -->
+    <section>
+      <h2>💰 Accounting Report (2023-2024)</h2>
+      <div class="chart-container">
+        <canvas id="accountingChart"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const ctx = document.getElementById('accountingChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['2023', '2024'],
+        datasets: [
+          {
+            label: 'Cost (₹)',
+            data: [700000, 850000],
+            borderColor: '#f39c12',
+            fill: false
+          },
+          {
+            label: 'Sell (₹)',
+            data: [1100000, 1250000],
+            borderColor: '#27ae60',
+            fill: false
+          },
+          {
+            label: 'Profit (₹)',
+            data: [400000, 400000],
+            borderColor: '#2980b9',
+            fill: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Amount in INR' }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
